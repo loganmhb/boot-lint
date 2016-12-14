@@ -38,3 +38,19 @@ Example usage:
 ```
 
 Alternatively, you can define any boot task you want that attaches data to the `:com.bckly.boot-lint/reports` key of the fileset's metadata (hopefully under your own namespaced key, to avoid conflicts) and the use the `fail` task to fail builds (TODO: fail conditionally on linters).
+
+## Gotchas
+
+Since the linter body is evaluated in a pod, it won't have access to Boot functions or the executing environment, except what you pass in with the unquote operator - see the handling of the dependencies in the above ancient example. It's best to pull all the information you need out of the Boot environment outside the `linter` block, if possible. You *do* have access to the fileset through the binding you provide, however, and that can be used in unquoted expressions as in this Kibit example:
+
+```clojure
+(deftask kibit []
+  (linter ::kibit fileset '[[jonase/kibit "0.1.3"]]
+          (require '[kibit.check :as kibit])
+          (->> ~(mapv (comp #(.getAbsolutePath %)
+                            boot/tmp-file)
+                      (clj-files fileset))
+               (map (juxt identity kibit/check-file))
+               (into {})
+               seq)))
+```
