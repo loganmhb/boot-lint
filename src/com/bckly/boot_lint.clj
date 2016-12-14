@@ -64,7 +64,7 @@
                seq)))
 
 
-(deftask lint
+(deftask fail
   "Fail if any linters have attached reports."
   []
   (boot/with-post-wrap fileset
