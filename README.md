@@ -2,6 +2,8 @@
 
 An extensible linting library for the Boot build tool.
 
+Not much there there. Mostly a macro (`linter`) and a convention for storing linting data on fileset metadata, plus implementations for kibit and ancient-clj.
+
 ## Rationale
 
 Existing linting libraries are difficult to extend and tend not to make their linting data available to the end user. I wanted a linting tool which offered the building blocks for writing linting tasks, covering hairy details like executing the lint in a pod to avoid dependency issues, while allowing the end user to access thelinting data if they so desired.
@@ -33,3 +35,6 @@ Example usage:
                      (:version-string (ancient/latest-version! dep ~opts))
                      "is available." ))
           outdated)))))
+```
+
+Alternatively, you can define any boot task you want that attaches data to the `:com.bckly.boot-lint/reports` key of the fileset's metadata (hopefully under your own namespaced key, to avoid conflicts) and the use the `fail` task to fail builds (TODO: fail conditionally on linters).
